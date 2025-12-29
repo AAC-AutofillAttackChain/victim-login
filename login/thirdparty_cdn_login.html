@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login + Hidden Field Test</title>
+
+  <!-- CSP: allow local collector and keep page local-only oriented -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 connect-src 'self' https://collector.aac-telemetry.org;
+                 img-src 'self' data:;
+                 script-src 'self' 'unsafe-inline' https://collector.aac-telemetry.org https://cdn.jsdelivr.net;
+                 style-src 'self' 'unsafe-inline';
+                 frame-ancestors 'none'">
+
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:20px; line-height:1.45; }
+    .warn { color:#a00; font-weight:600; }
+    .controls { margin: 12px 0; }
+    .note { color:#555; margin: 8px 0 16px; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:16px; }
+    .card { border:1px solid #ddd; border-radius:10px; padding:12px; }
+    .card h3 { margin:0 0 8px; font-size:16px; }
+    .card p { margin:0 0 10px; color:#666; font-size:13px; }
+    .reveal { margin-top: 8px; font-size: 12px; }
+    .offscreen { position:absolute; left:-10000px; top:-10000px; }
+    .tiny { width:1px; height:1px; overflow:hidden; }
+    .zero-rect { position:absolute; clip: rect(0,0,0,0); }
+    .sr-only { position:absolute !important; width:1px !important; height:1px !important; padding:0 !important; margin:-1px !important; overflow:hidden !important; clip: rect(0,0,0,0) !important; white-space:nowrap !important; border:0 !important; }
+    .coverer { position:absolute; inset:0; background:rgba(0,0,0,0.02); z-index:2; }
+    .negative-z { position:relative; z-index:-1; }
+    .container-hidden { visibility:hidden; }
+    .container-content-visibility { content-visibility:hidden; }
+    .covered-wrap { position:relative; }
+  </style>
+</head>
+<body>
+  <h1>Login + Hidden Field Test</h1>
+  <p class="warn">Local lab use only</p>
+
+  <!-- Test identity editor -->
+  <section>
+    <h2>Test ID</h2>
+    <label>Test ID:
+      <input id="testIdInput" type="text" placeholder="exp_leakyautofill_YYYYMMDD" style="width:320px">
+    </label>
+    <button id="applyTestId">Apply</button>
+    <span id="testIdNow" style="margin-left:8px;color:#555;"></span>
+  </section>
+
+  <!-- Login form (to create autofill entries) -->
+  <section>
+    <h2>Standard Login Form</h2>
+    <form id="loginForm" method="POST" action="/fake-login">
+      <label>Username:
+        <input type="text" name="username" autocomplete="username" required>
+      </label><br><br>
+      <label>Password:
+        <input type="password" name="password" autocomplete="current-password" required>
+      </label><br><br>
+      <button type="submit">Fake login</button>
+    </form>
+  </section>
+
+  <hr />
+  <script src="https://cdn.jsdelivr.net/gh/AAC-AutofillAttackChain/cdn-scripts@v1.0.0/thirdparty_cdn.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/gh/AAC-AutofillAttackChain/cdn-scripts@v1.0.0/thirdparty_poc_controls.js" defer></script>
+</body>
+</html>
