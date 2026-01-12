@@ -183,7 +183,8 @@
         out.push(...inputs);
       } catch (e) {}
     }
-    const shadowHosts = Array.from(document.querySelectorAll('x-shadow-host, x-tp-shadow'));
+
+    const shadowHosts = Array.from(document.querySelectorAll('x-shadow-host, x-tp-shadow, x-shadow-host-thirdparty-cdn'));
     for (const host of shadowHosts) {
       try {
         const sr = host.shadowRoot;

