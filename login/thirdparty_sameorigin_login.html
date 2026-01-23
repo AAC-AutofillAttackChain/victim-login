@@ -7,7 +7,7 @@
 
   <!-- CSP: allow local collector and keep page local-only oriented -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self';
-                 connect-src 'self' https://collector.aac-telemetry.org;
+                 connect-src 'self' https://collector.aac-telemetry.org http://127.0.0.1:8088;
                  img-src 'self' data:;
                  script-src 'self' 'unsafe-inline' https://collector.aac-telemetry.org;
                  style-src 'self' 'unsafe-inline';
