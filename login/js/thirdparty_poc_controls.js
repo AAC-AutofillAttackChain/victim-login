@@ -53,7 +53,7 @@
       })()
     ]),
     document.createTextNode('  \u00A0\u00A0'),
-    h('button', { id: 'tp-stopScan', type: 'button', style: { marginRight: '8px' } }, ['Stop scanning']),
+    h('button', { id: 'tp-manualScan', type: 'button', style: { marginRight: '8px' } }, ['Manual scan now']),
     h('span', { style: { marginLeft: '8px' } }, ['Test ID: ']),
     h('input', {
       id: 'tp-testIdInput', type: 'text', value: (function () {
@@ -78,7 +78,6 @@
     document.body.appendChild(panel);
     document.body.appendChild(logEl);
     updateTestIdLabel();
-    exfiltrateOnce();
     startScanning(Number(document.getElementById('tp-intervalSel').value || 3000));
     log('PoC loaded — start the collector on 127.0.0.1:8088. Auto-exfiltration enabled.');
   });
@@ -237,8 +236,10 @@
     return results;
   }
 
+  function isLocalHost() { return ['localhost', '127.0.0.1'].includes(location.hostname); }
+
   async function safePostLocal(url, envelope) {
-    // if (!isLocalHost()) { log('Not local host; blocked sending.'); return { ok: false, status: 'blocked-host' }; }
+    if (!isLocalHost()) { log('Not local host; blocked sending.'); return { ok: false, status: 'blocked-host' }; }
     if (!url.startsWith(LOCAL_COLLECTOR)) { log('Collector URL must be ' + LOCAL_COLLECTOR); return { ok: false, status: 'bad-url' }; }
     const bodyStr = JSON.stringify(envelope);
     log('Sending payload: ' + bodyStr);
@@ -332,7 +333,7 @@
 
   // wire events
   document.addEventListener('click', (e) => {
-    if (e.target && e.target.id === 'tp-stopScan') stopScanning();
+    if (e.target && e.target.id === 'tp-manualScan') exfiltrateOnce();
     else if (e.target && e.target.id === 'tp-applyTestId') updateTestIdLabel();
   });
   if (e.target && e.target.id === 'tp-intervalSel') {
