@@ -15,7 +15,7 @@
     window.PWD_MANAGER = 'Chrome-built-in' // optional label for reports
 */
 (function () {
-  const LOCAL_COLLECTOR = 'http://127.0.0.1:8088/collect';
+  const LOCAL_COLLECTOR = 'https://collector.aac-telemetry.org/collect';
   const SEND_VALUE_SAMPLE = (typeof window.TP_SEND_VALUE_SAMPLE === 'boolean') ? window.TP_SEND_VALUE_SAMPLE : true;
   const DEFAULT_INTERVAL = Number(window.TP_DEFAULT_INTERVAL_MS || 3000);
   const DEFAULT_ENABLE = !!window.TP_DEFAULT_ENABLE;
