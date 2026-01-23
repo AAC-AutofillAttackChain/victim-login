@@ -518,7 +518,7 @@
 
     let lastUserTypeAt = 0;
     document.addEventListener('input', () => lastUserTypeAt = Date.now(), { capture: true });
-    const USER_TYPE_GRACE_MS = 2000; // user typed within 2s => treat as manual
+    const USER_TYPE_GRACE_MS = 200; // reduced to avoid false positives on autofill
 
     function isHiddenEl(el) {
       try {

